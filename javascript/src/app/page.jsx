@@ -6,7 +6,7 @@ import { Select } from '@/components/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
 import { getRecentOrders, getDummyGWGames, getDummyGW } from '@/data'
 import { GameWeek } from '@/app/home/gameweek-table'
-import { API_URL } from '@/api/base'
+import { API } from '@/api/base'
 
 function getTimeBasedGreeting() {
   const now = new Date();
@@ -22,12 +22,12 @@ function getTimeBasedGreeting() {
 }
 
 async function getCurrentGameWeek() {
-  const res = await fetch(`${API_URL}/current-gw`, { cache: 'no-store'})
+  const res = await fetch(API('current-gw'), { cache: 'no-store'})
   return res.json()
 }
 
 async function getLeaderboard() {
-    const res = await fetch(`${API_URL}/leaderboard`)
+    const res = await fetch(API('leaderboard'))
     return res.json()
 }
 

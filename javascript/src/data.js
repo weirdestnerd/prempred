@@ -937,16 +937,16 @@ export function getDummyGWGames() {
         id: 1,
             started_at: '2024-10-09T15:00:00.000Z',
             scores: {
-                team1: 3,
-                team2: 2,
+                home_team: 3,
+                away_team: 2,
             },
-            team1: {
+            home_team: {
                 full_name: 'arsenal',
                 short_name: 'arsenal',
                 acronym: 'ars',
                 color: 'red',
             },
-            team2: {
+            away_team: {
                 full_name: 'chelsea',
                 short_name: 'chelsea',
                 acronym: 'che',
@@ -960,16 +960,16 @@ export function getDummyGWGames() {
         id: 2,
             started_at: '2024-10-10T15:00:00.000Z',
             scores: {
-                team1: 1,
-                team2: 2,
+                home_team: 1,
+                away_team: 2,
             },
-            team1: {
+            home_team: {
                 full_name: 'arsenal',
                 short_name: 'arsenal',
                 acronym: 'ars',
                 color: 'red',
             },
-            team2: {
+            away_team: {
                 full_name: 'chelsea',
                 short_name: 'chelsea',
                 acronym: 'che',
@@ -983,16 +983,16 @@ export function getDummyGWGames() {
         id: 3,
             started_at: '2024-10-01T15:00:00.000Z',
             scores: {
-                team1: 3,
-                team2: 3,
+                home_team: 3,
+                away_team: 3,
             },
-            team1: {
+            home_team: {
                 full_name: 'arsenal',
                 short_name: 'arsenal',
                 acronym: 'ars',
                 color: 'red',
             },
-            team2: {
+            away_team: {
                 full_name: 'chelsea',
                 short_name: 'chelsea',
                 acronym: 'che',
@@ -1006,16 +1006,16 @@ export function getDummyGWGames() {
         id: 4,
             started_at: '2024-10-16T20:32:00.000Z',
             scores: {
-                team1: 0,
-                team2: 1,
+                home_team: 0,
+                away_team: 1,
             },
-            team1: {
+            home_team: {
                 full_name: 'arsenal',
                 short_name: 'arsenal',
                 acronym: 'ars',
                 color: 'red',
             },
-            team2: {
+            away_team: {
                 full_name: 'chelsea',
                 short_name: 'chelsea',
                 acronym: 'che',
@@ -1029,16 +1029,16 @@ export function getDummyGWGames() {
         id: 5,
             started_at: '2024-10-31T15:00:00.000Z',
             scores: {
-                team1: 1,
-                team2: 2,
+                home_team: 1,
+                away_team: 2,
             },
-            team1: {
+            home_team: {
                 full_name: 'arsenal',
                 short_name: 'arsenal',
                 acronym: 'ars',
                 color: 'red',
             },
-            team2: {
+            away_team: {
                 full_name: 'chelsea',
                 short_name: 'chelsea',
                 acronym: 'che',
@@ -1052,16 +1052,16 @@ export function getDummyGWGames() {
         id: 6,
             started_at: '2024-10-31T15:00:00.000Z',
             scores: {
-                team1: 1,
-                team2: 2,
+                home_team: 1,
+                away_team: 2,
             },
-            team1: {
+            home_team: {
                 full_name: 'arsenal',
                 short_name: 'arsenal',
                 acronym: 'ars',
                 color: 'red',
             },
-            team2: {
+            away_team: {
                 full_name: 'chelsea',
                 short_name: 'chelsea',
                 acronym: 'che',
@@ -1075,16 +1075,16 @@ export function getDummyGWGames() {
         id: 7,
             started_at: '2024-10-31T15:00:00.000Z',
             scores: {
-                team1: 1,
-                team2: 2,
+                home_team: 1,
+                away_team: 2,
             },
-            team1: {
+            home_team: {
                 full_name: 'arsenal',
                 short_name: 'arsenal',
                 acronym: 'ars',
                 color: 'red',
             },
-            team2: {
+            away_team: {
                 full_name: 'chelsea',
                 short_name: 'chelsea',
                 acronym: 'che',
@@ -1098,16 +1098,16 @@ export function getDummyGWGames() {
         id: 8,
             started_at: '2024-10-31T15:00:00.000Z',
             scores: {
-                team1: 1,
-                team2: 2,
+                home_team: 1,
+                away_team: 2,
             },
-            team1: {
+            home_team: {
                 full_name: 'arsenal',
                 short_name: 'arsenal',
                 acronym: 'ars',
                 color: 'red',
             },
-            team2: {
+            away_team: {
                 full_name: 'chelsea',
                 short_name: 'chelsea',
                 acronym: 'che',
@@ -1121,16 +1121,16 @@ export function getDummyGWGames() {
         id: 9,
             started_at: '2024-10-31T15:00:00.000Z',
             scores: {
-                team1: 1,
-                team2: 2,
+                home_team: 1,
+                away_team: 2,
             },
-            team1: {
+            home_team: {
                 full_name: 'arsenal',
                 short_name: 'arsenal',
                 acronym: 'ars',
                 color: 'red',
             },
-            team2: {
+            away_team: {
                 full_name: 'chelsea',
                 short_name: 'chelsea',
                 acronym: 'che',
@@ -1144,16 +1144,16 @@ export function getDummyGWGames() {
         id: 10,
             started_at: '2024-10-31T15:00:00.000Z',
             scores: {
-                team1: 1,
-                team2: 2,
+                home_team: 1,
+                away_team: 2,
             },
-            team1: {
+            home_team: {
                 full_name: 'arsenal',
                 short_name: 'arsenal',
                 acronym: 'ars',
                 color: 'red',
             },
-            team2: {
+            away_team: {
                 full_name: 'chelsea',
                 short_name: 'chelsea',
                 acronym: 'che',

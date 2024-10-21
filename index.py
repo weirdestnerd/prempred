@@ -1,42 +1,53 @@
-from flask import Flask, jsonify
+from audioop import error
+
+from flask import Flask, jsonify, request, abort
+from marshmallow import ValidationError
+
+from model.user import UserSchema, UserDB
+from service.gameweek import GameweekService
 
 app = Flask(__name__)
 
+@app.errorhandler(422)
+def unprocessable_entity(e):
+    return jsonify(error=str(e)), 422
+
+# E.g. 'GET /user?username=abc'
+@app.route('/user')
+def get_user():
+    user_params = request.args
+
+    if 'username' not in user_params.keys():
+        abort(422, description="Missing required param: username")
+
+    try:
+        user = UserDB.find({ 'username': user_params['username'] } )
+    except error:
+        abort(422, description="Something went wrong finding this user!")
+
+    return jsonify(user), 200
+
+@app.route('/user', methods=['POST'])
+def create_user():
+    # TODO: only admin users can create users
+    user_params = request.args
+    schema = UserSchema()
+
+    try:
+        user = schema.load(user_params)
+        user = UserDB.create(user)
+    except ValidationError as error:
+        abort(422, description=error.messages)
+
+    return jsonify({"message": "user created", 'user': user}), 200
 
 @app.route('/')
 def home():
     return 'Welcome home @ PremPred!'
 
-# TODO: get current predictions for current gw for user
 @app.route('/current-gw')
 def current_gw():
-    return jsonify({
-        'number': 8,
-        'games': [{
-        'id': 1,
-            'started_at': '2024-10-31T15:00:00.000Z',
-            'scores': {
-                'team1': 3,
-                'team2': 2,
-            },
-            'team1': {
-                'full_name': 'arsenal',
-                'short_name': 'arsenal',
-                'acronym': 'ars',
-                'color': 'red',
-            },
-            'team2': {
-                'full_name': 'chelsea',
-                'short_name': 'chelsea',
-                'acronym': 'che',
-                'color': 'blue',
-            },
-            'user_prediction': 'chelsea',
-            'ai_prediction': '',
-            'prediction_score': '',
-        }],
-        'ai_predictions_for_user': [{'a':1}],
-    })
+    return jsonify(GameweekService().current_gw())
 
 # TODO: get entire leaderboard
 @app.route('/leaderboard')
@@ -60,6 +71,7 @@ def leaderboard():
     ])
 
 # TODO: get predictions so far this season for user
+#   - paginate by gameweek
 @app.route('/season')
 def season():
     return jsonify([{
@@ -68,16 +80,16 @@ def season():
         'id': 1,
             'started_at': '2024-10-09T15:00:00.000Z',
             'scores': {
-                'team1': 3,
-                'team2': 2,
+                'home_team': 3,
+                'away_team': 2,
             },
-            'team1': {
+            'home_team': {
                 'full_name': 'arsenal',
                 'short_name': 'arsenal',
                 'acronym': 'ars',
                 'color': 'red',
             },
-            'team2': {
+            'away_team': {
                 'full_name': 'chelsea',
                 'short_name': 'chelsea',
                 'acronym': 'che',
@@ -85,9 +97,7 @@ def season():
             },
             'user_prediction': 'chelsea',
             'ai_prediction': '',
-            'prediction_score': '',
         }],
-        'ai_predictions_for_user': [],
     }])
 
 

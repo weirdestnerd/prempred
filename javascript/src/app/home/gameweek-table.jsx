@@ -10,14 +10,14 @@ import { Badge } from '@/components/badge'
 import { debounce } from 'throttle-debounce';
 
 import AcceptPredictionsModal from '@/app/home/ai/accept-predictions-modal'
-import { API_URL } from '@/api/base'
+import { API } from '@/api/base'
 
 function PostGameWeekGame({ game }) {
-    const team1win = game.scores.team1 > game.scores.team2
-    const team2win = game.scores.team2 > game.scores.team1
-    const draw = game.scores.team1 === game.scores.team2
-    const gotPrediction = useMemo(() => (game.user_prediction === game.team1.short_name && team1win) ||
-            (game.user_prediction === game.team2.short_name && team2win) ||
+    const homeTeamWin = game.scores.home_team > game.scores.away_team
+    const awayTeamWin = game.scores.away_team > game.scores.home_team
+    const draw = game.scores.home_team === game.scores.away_team
+    const gotPrediction = useMemo(() => (game.user_prediction === game.home_team.short_name && homeTeamWin) ||
+            (game.user_prediction === game.away_team.short_name && awayTeamWin) ||
             (game.user_prediction === 'draw' && draw), [game])
 
     function Team({ team, score, won }) {
@@ -36,13 +36,13 @@ function PostGameWeekGame({ game }) {
     return (
         <TableRow key={game.id} className="isolate rounded-md shadow-sm">
           <TableCell>
-              <Team team={game.team1} score={game.scores.team1} won={team1win} />
+              <Team team={game.home_team} score={game.scores.home_team} won={homeTeamWin} />
           </TableCell>
           <TableCell>
-              <Team team={game.team2} score={game.scores.team2} won={team2win} />
+              <Team team={game.away_team} score={game.scores.away_team} won={awayTeamWin} />
           </TableCell>
           <TableCell>
-              {game.user_prediction && <Badge color={gotPrediction ? "lime" : "red"}>{gotPrediction ? '+2' : '-1'}</Badge>}
+              {game.user_prediction && <Badge color={gotPrediction ? "lime" : "red"}>{gotPrediction ? '✅ +2' : '❌ -1'}</Badge>}
           </TableCell>
         </TableRow>
     )
@@ -52,21 +52,22 @@ function PreGameWeekGame({ game }) {
     const [prediction, setPrediction] = useState(game.user_prediction)
     const sendToApi = debounce(1000, () => {
         console.log("API CALL")
-        fetch(`${API_URL}/predict-game`, { method: 'POST' })
+        fetch(API('predict-game'), { method: 'POST' })
     })
 
+    const onPredictGame = (predict) => {
+        if (prediction !== predict) sendToApi()
+        setPrediction(predict)
+    }
+
     function TeamButton({ team }) {
-        const onPredictGame = () => {
-            setPrediction(team.short_name)
-            sendToApi()
-        }
 
         return (
             <Button
                 className="px-4 py-2"
                 outline={prediction !== team.short_name}
                 color={prediction === team.short_name ? team.color : ''}
-                onClick={onPredictGame}
+                onClick={() => onPredictGame(team.short_name)}
               >
                 {team.short_name}
               </Button>
@@ -76,13 +77,13 @@ function PreGameWeekGame({ game }) {
     return (
         <TableRow key={game.id} className="isolate rounded-md shadow-sm">
           <TableCell>
-              <TeamButton team={game.team1} />
+              <TeamButton team={game.home_team} />
           </TableCell>
           <TableCell>
-              <Button outline={prediction !== 'draw'} className="text-xs px-2 py-1" onClick={() => setPrediction('draw')}>draw</Button>
+              <Button outline={prediction !== 'draw'} className="text-xs px-2 py-1" onClick={() => onPredictGame('draw')}>draw</Button>
           </TableCell>
           <TableCell>
-              <TeamButton team={game.team2} />
+              <TeamButton team={game.away_team} />
           </TableCell>
         </TableRow>
     )
@@ -108,9 +109,9 @@ function GameWeekGame({ game }) {
 }
 
 export function GameWeek({ gameweek }) {
-    const { number, games, ai_predictions_for_user } = gameweek
+    const { number, games } = gameweek
 
-    const hasAIPred = !!ai_predictions_for_user.length
+    const hasAIPred = games.some(g => !!g.ai_prediction)
     const gwStarted = new Date(games.sort((g1, g2) => new Date(g1.started_at).getTime() - new Date(g2.started_at).getTime())[0]?.started_at) <= new Date()
 
     const [predictionModalOpen, setPredictionModalOpen] = useState(false)
@@ -123,7 +124,7 @@ export function GameWeek({ gameweek }) {
     ]
 
     const dontShowModalAgainApi = () => {
-        fetch(`${API_URL}/acknowledge-ai`, { method: 'POST' })
+        fetch(API('acknowledge-ai'), { method: 'POST' })
     }
 
     return (

@@ -1,12 +1,13 @@
 import { GameWeek } from '@/app/home/gameweek-table'
 import { getDummyGW } from '@/data'
+import { API } from '@/api/base'
 
 export const metadata = {
   title: 'Season',
 }
 
 async function getSeason() {
-    const res = await fetch('http://localhost:5000/season')
+    const res = await fetch(API('season'))
     return res.json()
 }
 
