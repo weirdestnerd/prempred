@@ -24,11 +24,14 @@ cur.execute('CREATE TABLE IF NOT EXISTS teams (id serial PRIMARY KEY,'
                                 'color varchar(15))'
             )
 
-cur.execute('CREATE TABLE IF NOT EXISTS gameweeks (id serial PRIMARY KEY, number int NOT NULL UNIQUE)')
+cur.execute('CREATE TABLE IF NOT EXISTS gameweeks (id serial PRIMARY KEY, '
+                                'number int NOT NULL UNIQUE,'
+                                'end_date TIMESTAMPTZ NOT NULL)'
+            )
 
 cur.execute('CREATE TABLE IF NOT EXISTS games (id serial PRIMARY KEY,'
                                 'scores JSONB NOT NULL,'
-                                'started_at TIMESTAMP NOT NULL,'
+                                'started_at TIMESTAMPTZ NOT NULL,'
                                 'home_team_id INT NOT NULL,'
                                 'away_team_id INT NOT NULL,'
                                 'gameweek_id INT NOT NULL,'
@@ -37,7 +40,7 @@ cur.execute('CREATE TABLE IF NOT EXISTS games (id serial PRIMARY KEY,'
                                 'CONSTRAINT fk_gameweek FOREIGN KEY(gameweek_id) REFERENCES gameweeks(id))'
             )
 
-cur.execute('CREATE TABLE IF NOT EXISTS gameweek_scores (id serial PRIMARY kEY,'
+cur.execute('CREATE TABLE IF NOT EXISTS user_gameweek_scores (id serial PRIMARY kEY,'
                                 'gameweek_id INT NOT NULL,'
                                 'user_id INT NOT NULL,'
                                 'score INT DEFAULT 0,'

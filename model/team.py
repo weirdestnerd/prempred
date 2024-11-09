@@ -1,34 +1,17 @@
-from marshmallow import Schema, fields, post_load
-from db.util import db_get
+from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy.orm import declarative_base
+
+from model import Base
 
 
-class Team:
-    def __init__(self, id=None, full_name='', short_name='', acronym='', color=''):
-        self.id = id
-        self.full_name = full_name
-        self.short_name = short_name
-        self.acronym = acronym
-        self.color = color
+class Team(Base):
+    __tablename__ = 'teams'
 
-    def __repr__(self):
-        return "<Team(name={self.full_name!r})>".format(self=self)
+    id = Column(Integer(), primary_key=True)
+    full_name = Column(String(), nullable=False, unique=True)
+    short_name = Column(String(), nullable=False)
+    acronym = Column(String())
+    color = Column(String())
 
-
-class TeamDB:
-    @staticmethod
-    def find(param):
-        schema = TeamSchema()
-        team = db_get('teams', ['*'], param)
-        return schema.dump(Team(*team))
-
-
-class TeamSchema(Schema):
-    id = fields.Int(dump_only=True)
-    full_name = fields.Str(required=True)
-    short_name = fields.Str(required=True)
-    acronym = fields.Str()
-    color = fields.Str()
-
-    @post_load
-    def make_user(self, data, **kwargs):
-        return Team(**data)
+    def __repr__(self) -> str:
+        return f"Team(id={self.id!r}, username={self.username!r})"

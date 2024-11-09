@@ -8,6 +8,11 @@ flask = "*"
 python-dotenv = "*"
 marshmallow = "*"
 psycopg2-binary = "*"
+sqlalchemy = "*"
+flask-login = "*"
+flask-bcrypt = "*"
+flask-jwt-extended = "*"
+alembic = "*"
 
 [dev-packages]
 

@@ -4,9 +4,9 @@ from typing import Dict
 from marshmallow import fields, post_load
 from marshmallow.fields import String
 
-from model.game import Game, GameSchema
-from model.gameweek import Gameweek, GameweekSchema
-from model.team import Team, TeamSchema
+from model_marshmallow.game import Game, GameSchema
+from model_marshmallow.gameweek import Gameweek, GameweekSchema
+from model_marshmallow.team import Team, TeamSchema
 
 
 class SerializedGame(Game):
@@ -36,5 +36,5 @@ class SerializedGameSchema(GameSchema):
     ai_prediction = fields.String()
 
     @post_load
-    def make_user(self, data, **kwargs):
+    def make(self, data, **kwargs):
         return SerializedGame(**data)

@@ -1,35 +1,92 @@
-from marshmallow import Schema, fields, post_load
-from db.util import db_insert, db_get
+import os
+import datetime
 
-class User:
-    def __init__(self, id=None, username='', acknowledge_ai=False):
-        self.id = id
-        self.username = username
-        self.acknowledge_ai = acknowledge_ai
+import jwt
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 
-    def __repr__(self):
-        return "<User(name={self.username!r})>".format(self=self)
+from model import Base
 
-class UserDB:
+
+class User(Base):
+    __tablename__ = 'users'
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(Integer(), primary_key=True)
+    username = Column(String(150), nullable=False, unique=True)
+    acknowledge_ai = Column(Boolean(), default=False)
+    email = Column(String(255), unique=True, nullable=False)
+    password = Column(String(255), nullable=False)
+    registered_on = Column(DateTime, nullable=False)
+    admin = Column(Boolean, nullable=False, default=False)
+
+    def __init__(self, email, password, admin=False):
+        pass
+        # self.email = email
+        # self.password = bcrypt.generate_password_hash(
+        #     password, app.config.get('BCRYPT_LOG_ROUNDS')
+        # ).decode()
+        # self.registered_on = datetime.datetime.now()
+        # self.admin = admin
+
+
+    def __repr__(self) -> str:
+        return f"User(id={self.id!r}, username={self.username!r})"
+
+
+    def encode_auth_token(self, user_id):
+        """
+        Generates the Auth Token
+        :return: string
+        """
+        try:
+            payload = {
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=10),
+                'iat': datetime.datetime.utcnow(),
+                'sub': user_id
+            }
+            return jwt.encode(
+                payload,
+                os.getenv('AUTH_TOKEN_GEN_KEY'),
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
+
+
+    def encode_refresh_token(self, user_id):
+        """
+        Generates the Auth Token
+        :return: string
+        """
+        try:
+            payload = {
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
+                'iat': datetime.datetime.utcnow(),
+                'sub': user_id
+            }
+            return jwt.encode(
+                payload,
+                os.getenv('AUTH_TOKEN_GEN_KEY'),
+                algorithm='HS256'
+            )
+        except Exception as e:
+            return e
+
+
     @staticmethod
-    def create(user):
-        if not isinstance(user, User):
-            return
+    def decode_auth_token(auth_token):
+        """
+        Decodes the auth token
+        :param auth_token:
+        :return: integer|string
+        """
+        try:
+            payload = jwt.decode(auth_token, os.getenv('AUTH_TOKEN_GEN_KEY'))
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            print('Signature expired. Please log in again.')
+            return None
+        except jwt.InvalidTokenError:
+            print('Invalid token. Please log in again.')
+            return None
 
-        db_insert('users', user.__dict__.pop('id'))
-        return UserDB.find(user.__dict__)
-
-    @staticmethod
-    def find(param):
-        schema = UserSchema()
-        user = db_get('users', ['*'], param)
-        return schema.dump(User(*user))
-
-class UserSchema(Schema):
-    id = fields.Int(dump_only=True)
-    username = fields.Str(required=True)
-    acknowledge_ai = fields.Bool()
-
-    @post_load
-    def make_user(self, data, **kwargs):
-        return User(**data)

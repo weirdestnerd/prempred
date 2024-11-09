@@ -1,14 +1,13 @@
 from datetime import datetime
 
-from model.game import Game
-from model.gameweek import Gameweek
 from marshmallow import Schema, fields, post_load
 
-from service.schema.game.serialized_game import SerializedGameSchema
+from model_marshmallow.gameweek import Gameweek
+from service.schema.game.serialized_game import SerializedGameSchema, SerializedGame
 
 
 class GameweekWithGames(Gameweek):
-    def __init__(self, id=None, number=None, end_date:datetime=None, games:list[Game]=[]):
+    def __init__(self, id=None, number=None, end_date:datetime=None, games:list[SerializedGame]=[]):
         super().__init__(id, number, end_date)
         self.games = games
 

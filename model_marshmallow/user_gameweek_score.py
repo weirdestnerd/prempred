@@ -3,7 +3,7 @@ from marshmallow import Schema, fields, post_load
 from db.util import db_get
 
 
-class GameweekScore:
+class UserGameweekScore:
     def __init__(
             self,
             id=None,
@@ -17,18 +17,18 @@ class GameweekScore:
         self.score = score
 
     def __repr__(self):
-        return "<GameweekScore(gameweek={self.gameweek_id!r},user={self.user_id!r})>".format(self=self)
+        return "<UserGameweekScore(gameweek={self.gameweek_id!r},user={self.user_id!r})>".format(self=self)
 
 
-class GameweekScoreDB:
+class UserGameweekScoreDB:
     @staticmethod
     def find(param):
-        schema = GameweekScoreSchema()
-        gameweek_score = db_get('gameweek_scores', ['*'], param)
-        return schema.dump(GameweekScore(*gameweek_score))
+        schema = UserGameweekScoreSchema()
+        gameweek_score = db_get('user_gameweek_scores', ['*'], param)
+        return schema.dump(UserGameweekScore(*gameweek_score))
 
 
-class GameweekScoreSchema(Schema):
+class UserGameweekScoreSchema(Schema):
     id = fields.Int()
     gameweek_id = fields.Int()
     user_id = fields.Int()
@@ -36,4 +36,4 @@ class GameweekScoreSchema(Schema):
 
     @post_load
     def make_user(self, data, **kwargs):
-        return GameweekScore(**data)
+        return UserGameweekScore(**data)

@@ -1,13 +1,21 @@
-from service.schema.gameweek.with_games import GameweekWithGamesSchema
-from marshmallow import INCLUDE
+from datetime import datetime
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from db.util import get_db_engine
+from model.gameweek import Gameweek
+from model_marshmallow.gameweek import GameweekSchema
+from service.game import GameService
+from service.schema.gameweek.with_games import GameweekWithGamesSchema, GameweekWithGames
+
 
 class GameweekService:
     def __init__(self):
-        super()
+        super().__init__()
+
 
     def current_gw(self):
-        # TODO: base on current time, get current gameweek
-        #   current_time <= gameweek.end_date
         dummy = {
             'id': '1',
             'number': '8',
@@ -39,8 +47,13 @@ class GameweekService:
             }],
         }
 
-        # TODO: db.get gameweek, dg.gets games w/ user & ai predictions
-        #   GameweekWithGames(*gameweek, games=games)
-        schema = GameweekWithGamesSchema()
-        gameweek = schema.load(dummy, unknown=INCLUDE)
-        return schema.dump(gameweek)
+        engine = get_db_engine()
+        with Session(engine) as session:
+            query = select(Gameweek).where(Gameweek.end_date >= datetime.now())
+            return self.__load_gameweek(session.scalar(query))
+
+
+    def __load_gameweek(self, gameweek):
+        games = GameService().gw_games(gameweek=gameweek)
+        gameweek = GameweekWithGames(*GameweekSchema().dump(gameweek), games=games)
+        return GameweekWithGamesSchema().dump(gameweek)

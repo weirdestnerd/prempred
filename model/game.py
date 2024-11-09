@@ -1,49 +1,19 @@
-from datetime import datetime
-from typing import Dict
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import declarative_base
 
-from marshmallow import Schema, fields, post_load
-
-from db.util import db_get
-from service.schema.game_score.game_score import GameScoreSchema
+from model import Base
 
 
-class Game:
-    def __init__(
-            self,
-            id=None,
-            scores:Dict=None,
-            started_at:datetime='',
-            home_team_id:int=None,
-            away_team_id:int=None,
-            gameweek_id:int=None,
-    ):
-        self.id = id
-        self.scores = scores
-        self.started_at = started_at
-        self.home_team_id = home_team_id
-        self.away_team_id = away_team_id
-        self.gameweek_id = gameweek_id
+class Game(Base):
+    __tablename__ = 'games'
 
-    def __repr__(self):
-        return "<Game(name={self.home_team!r})>".format(self=self)
+    id = Column(Integer(), primary_key=True)
+    scores = Column(JSONB(), nullable=False)
+    started_at = Column(DateTime(), nullable=False)
+    home_team_id = Column(Integer(), ForeignKey('teams.id'))
+    away_team_id = Column(Integer(), ForeignKey('teams.id'))
+    gameweek_id = Column(Integer(), ForeignKey('gameweeks.id'))
 
-
-class GameDB:
-    @staticmethod
-    def find(param):
-        schema = GameSchema()
-        game = db_get('games', ['*'], param)
-        return schema.dump(Game(*game))
-
-
-class GameSchema(Schema):
-    id = fields.Int()
-    scores = fields.Nested(GameScoreSchema())
-    started_at = fields.DateTime()
-    gameweek_id = fields.Int()
-    home_team_id = fields.Int()
-    away_team_id = fields.Int()
-
-    @post_load
-    def make_user(self, data, **kwargs):
-        return Game(**data)
+    def __repr__(self) -> str:
+        return f"Game(id={self.id!r})"

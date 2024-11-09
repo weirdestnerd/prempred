@@ -1,34 +1,14 @@
-from marshmallow import Schema, fields, post_load
-from marshmallow.fields import String
+from sqlalchemy import Column, Integer, Text
+from sqlalchemy.orm import declarative_base
 
-from db.util import db_get
-
-
-class Prediction:
-    def __init__(
-            self,
-            id=None,
-            name:String='',
-    ):
-        self.id = id
-        self.name = name
-
-    def __repr__(self):
-        return "<Prediction(name={self.name!r})>".format(self=self)
+from model import Base
 
 
-class PredictionDB:
-    @staticmethod
-    def find(param):
-        schema = PredictionSchema()
-        prediction = db_get('predictions', ['*'], param)
-        return schema.dump(Prediction(*prediction))
+class Prediction(Base):
+    __tablename__ = 'predictions'
 
+    id = Column(Integer(), primary_key=True)
+    name = Column(Text(), nullable=False, unique=True)
 
-class PredictionSchema(Schema):
-    id = fields.Int()
-    name = fields.Str()
-
-    @post_load
-    def make_user(self, data, **kwargs):
-        return Prediction(**data)
+    def __repr__(self) -> str:
+        return f"Prediction(id={self.id!r}, name={self.name!r})"
